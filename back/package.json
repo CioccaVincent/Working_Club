@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "initdb": "nodemon index.js",
+    "start":"nodemon server.js"
   },
   "author": "Ciocca Vincent",
   "license": "ISC",

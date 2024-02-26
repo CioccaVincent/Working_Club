@@ -2,28 +2,19 @@ const express = require("express");
 const route = express.Router();
 const db = require("../database/db");
 const Sequelize = require("sequelize");
-const Op = Sequelize.Op;
+const { passwordCrypt } = require("../helpers");
 
-route.get("/getAll", (req, res) => {
-    db.user
-        .findAll()
-        .then((users) => {
-            res.json({ users: users });
-        })
-        .catch((err) => {
-            res.json({ error: err });
-        });
-});
-
-route.post("/newuser", (req, res) => {
+//Créer un nouveau user
+route.post("/", (req, res) => {
     db.user
         .findOne({
             where: { email: req.body.email },
         })
-        .then((user) => {
+        .then(async (user) => {
             if (!user) {
+                const passwordEncrypted = await passwordCrypt(req.body.password)
                 db.user
-                    .create(req.body)
+                    .create({ ...req.body, password: passwordEncrypted })
                     .then((itemuser) => {
                         res.json({ user: itemuser });
                     })
@@ -38,7 +29,9 @@ route.post("/newuser", (req, res) => {
             res.json(err);
         });
 });
-route.put("/update/:id", (req, res) => {
+
+//Modifier un user par id
+route.put("/:id", (req, res) => {
     db.user
         .findOne({
             where: { id: req.params.id },
@@ -69,7 +62,20 @@ route.put("/update/:id", (req, res) => {
         });
 });
 
-route.get("/getuser/:id", (req, res) => {
+//Rechercher tous les utilisateurs
+route.get("/", (req, res) => {
+    db.user
+        .findAll()
+        .then((users) => {
+            res.json({ users: users });
+        })
+        .catch((err) => {
+            res.json({ error: err });
+        });
+});
+
+//Rechercher un utilisateur par id
+route.get("/:id", (req, res) => {
     db.user
         .findOne({
             where: { id: req.params.id },
@@ -82,7 +88,8 @@ route.get("/getuser/:id", (req, res) => {
         });
 });
 
-route.delete("/delete/:id", (req, res) => {
+//Supprimer un user par id
+route.delete("/:id", (req, res) => {
     db.user
         .findOne({
             where: { id: req.params.id },

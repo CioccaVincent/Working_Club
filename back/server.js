@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use("/User_commentaire", require("./router/user_commentaire"));
 // app.use("/User_like", require("./router/user_like"));
 // app.use("/User_role", require("./router/user_role"));
-app.use("/User", require("./router/user"));
+app.use("/users", require("./router/users"));
 
 
 app.listen(port, function() {

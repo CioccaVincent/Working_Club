@@ -5,131 +5,54 @@ const Sequelize = require("sequelize");
 
 //Créer un nouveau poste
 route.post('/', async (req, res) => {
-    db.article
-        const { texte, image } = req.body;
+    const { texte, imageUrl } = req.body;
         
-    try {
-        const newPost = new Post({ texte, image });
-    await newPost.save();
-        
-        res.json("Poste crée avec succès");
-        } catch (error) {
-        res.json("Une erreur est survenue");
-        }
+    db.article.create({ texte, imageUrl })
+        .then(() => {
+            res.json("Poste créer avec succès");
+        })
+        .catch((err) => {
+            res.json(err);
+        });
   });
 
 //Modifier un poste
 route.put('/:id', async (req, res) => {
-    db.article
-    const {texte, image} = req.body;
-    
-    try {
-    const post = await Post.findByIdAndUpdate(req.params.id, {texte, image}, { new: true });
-    
-    if (!post) {
-        return res.json("Poste mis à jour");
-    }
-    
-    res.send(post);
-    } catch (error) {
-    res.json("Une erreur est survenue");
-    }
+
+    db.article.findOne({
+        where: { id: req.params.id },
+    })
+    .then((article) => {
+        article.update(req.body)
+        .then(() => {
+            res.json("Poste mis à jour avec succès");
+        })
+        .catch((err) => {
+            res.json(err);
+        });
+    })
+    .catch((err) => {
+        res.json(err);
+    });
 });
 
 //Supprimer un poste
-route.delete('/posts/:id', async (req, res) => {
-try {
-    const post = await Post.findByIdAndDelete(req.params.id);
-    
-    if (!post) {
-    return res.json("Poste supprimer");
-    }
-    
-    res.send(post);
-} catch (error) {
-    res.json("Une erreur est survenue");
-}
+route.delete('/:id', async (req, res) => {
+    db.article.findOne({
+        where: { id: req.params.id },
+    })
+    .then((article) => {
+        article.destroy()        
+        .then(() => {
+            res.json("Poste supprimer avec succès");
+        })
+        .catch((err) => {
+            res.json(err);
+        });
+    })
+    .catch((err) => {
+        res.json(err);
+    });
 });
-
-// route.get("/", (req, res) => {
-//     db.article
-//         .findAll()
-//         .then((articles) => {
-//             res.json({ articles: articles });
-//         })
-//         .catch((err) => {
-//             res.json({ error: err });
-//         });
-// });
-
-// route.put("/:id", (req, res) => {
-//     db.user
-//         .findOne({
-//             where: { id: req.params.id },
-//         })
-//         .then((user) => {
-//             user
-//                 .update(req.body)
-//                 .then(() => {
-//                     db.user
-//                         .findOne({
-//                             where: { id: req.params.id },
-//                         })
-//                         .then((newuser) => {
-//                             res.json({
-//                                 user: newuser,
-//                             });
-//                         })
-//                         .catch((err) => {
-//                             res.json(err);
-//                         });
-//                 })
-//                 .catch((err) => {
-//                     res.json(err);
-//                 });
-//         })
-//         .catch((err) => {
-//             res.json(err);
-//         });
-// });
-
-// route.get("/:id", (req, res) => {
-//     db.user
-//         .findOne({
-//             where: { id: req.params.id },
-//         })
-//         .then((user) => {
-//             res.json({ user: user });
-//         })
-//         .catch((err) => {
-//             res.json(err);
-//         });
-// });
-
-// route.delete("/:id", (req, res) => {
-//     db.user
-//         .findOne({
-//             where: { id: req.params.id },
-//         })
-//         .then((user) => {
-//             if (!user) {
-//                 res.json({
-//                     error: "this user not existe in your base",
-//                 });
-//             } else {
-//                 user
-//                     .destroy()
-//                     .then(() => {
-//                         res.json({ status: "user deleted" });
-//                     })
-//                     .catch((err) => {
-//                         res.json(err);
-//                     });
-//             }
-//         })
-//         .catch((err) => {
-//             res.json(err);
-//         });
-// });
 
 module.exports = route;

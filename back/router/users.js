@@ -22,7 +22,7 @@ route.post("/", (req, res) => {
                         res.json(err);
                     });
             } else {
-                res.json("user déjà utiliser dans db");
+                res.json("Cette utilisateur existe déjà");
             }
         })
         .catch((err) => {
@@ -97,13 +97,13 @@ route.delete("/:id", (req, res) => {
         .then((user) => {
             if (!user) {
                 res.json({
-                    error: "this user not existe in your base",
+                    error: "Cette utilisateur existe déjà",
                 });
             } else {
                 user
                     .destroy()
                     .then(() => {
-                        res.json({ status: "user deleted" });
+                        res.json({ status: "Utilisateur supprimer avec succès" });
                     })
                     .catch((err) => {
                         res.json(err);
